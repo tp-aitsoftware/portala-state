@@ -1,0 +1,49 @@
+plugins {
+    id "java"
+    alias(libs.plugins.spring.boot)
+    alias(libs.plugins.dependency.management)
+}
+
+group = "pl.portala.statemachine"
+version = "0.0.1-SNAPSHOT"
+description = "PORTAL-STATE-1 - application state machine POC for the ecm domain"
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation "org.springframework.boot:spring-boot-starter"
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.boot:spring-boot-starter-jackson"
+    implementation "org.springframework.boot:spring-boot-starter-jdbc"
+    implementation "org.springframework.boot:spring-boot-starter-validation"
+    implementation "org.springframework.boot:spring-boot-starter-actuator"
+    implementation "org.springframework.boot:spring-boot-starter-security"
+    implementation "com.zaxxer:HikariCP"
+    implementation "org.postgresql:postgresql"
+
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
+    testImplementation "org.springframework.boot:spring-boot-starter-webmvc-test"
+    testImplementation "org.springframework.security:spring-security-test"
+    testImplementation "org.springframework.boot:spring-boot-testcontainers"
+    testImplementation "org.testcontainers:testcontainers"
+    testImplementation "org.testcontainers:testcontainers-junit-jupiter"
+    testImplementation "org.testcontainers:testcontainers-postgresql"
+    testImplementation libs.archunit.junit5.api
+    testRuntimeOnly libs.archunit.junit5.engine
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+}
+
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+    // Portala-state rule (mirrors ECM/CTP safety rule): Testcontainers-based
+    // integration tests must never run in parallel with other Gradle builds.
+    maxParallelForks = 1
+}

@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: portala-state
+
+  # The database itself is NOT part of the deliverable (T2); point these at any
+  # PostgreSQL. Values are overridable through the usual Spring env variables
+  # (SPRING_DATASOURCE_URL, SPRING_DATASOURCE_USERNAME, SPRING_DATASOURCE_PASSWORD).
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/portala_state}
+    username: ${SPRING_DATASOURCE_USERNAME:portala}
+    password: ${SPRING_DATASOURCE_PASSWORD:portala}
+    driver-class-name: org.postgresql.Driver
+
+  # A4: no JPA / Hibernate. The append-only schema is created from schema.sql on
+  # startup; it is idempotent (CREATE ... IF NOT EXISTS) so restarts are safe.
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+
+server:
+  port: ${SERVER_PORT:8080}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
